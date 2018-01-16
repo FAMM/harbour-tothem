@@ -25,4 +25,6 @@ OTHER_FILES += qml/harbour-tothem.qml \
     rpm/harbour-tothem.yaml \
     harbour-tothem.desktop \
     qml/cover/coveractions.py \
-    qml/pages/datadownloader.py
+    qml/backend/__init__.py  \
+    qml/backend/app.py \
+    qml/backend/tasks/task.py

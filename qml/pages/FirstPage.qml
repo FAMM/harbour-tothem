@@ -30,7 +30,6 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import io.thp.pyotherside 1.4
 import "../components"
 
 Page {
@@ -78,7 +77,7 @@ Page {
                 id: taskItemContextMenu
                 ContextMenu {
                     MenuItem {
-                        text: "Done"
+                        text: taskListItem.enabled ? "Done" : "Activate"
                         onClicked: { taskListItem.enabled = !taskListItem.enabled }
                     }
                     MenuItem {
@@ -96,85 +95,20 @@ Page {
         id: taskListModel
     }
 
-    onPageContainerChanged: addItems()
+    onPageContainerChanged: loadTasks()
 
-    function addItems() {
-        var toAdd = [
-                    {title: "Foo", active: true, desc: ""},
-                    {title: "Bar", active: true, desc: ""},
-                    {title: "Baz", active: false, desc: ""},
-                    {title: "Blaa", active: true, desc: ""},
-                    {title: "daskjdkajs", active: false, desc: ""},
-                    {title: "dasdas", active: true, desc: ""},
-                    {title: "daksljdasjd", active: true, desc: ""},
-                ];
+    function loadTasks() {
+//        var tasks = python.evaluate("tasks")
 
-        for(var i=0; i < toAdd.length; i++) {
-           taskListModel.append(toAdd[i])
-        }
+//        for(var i = 0; i < tasks.length; i++) {
+//            var t = tasks[i]
+//            taskListModel.append({
+//                 id: t.id,
+//                 title: t.description,
+//                 active: t.done
+//             });
+//        };
     }
-
-//    Label {
-//        id: mainLabel
-//        anchors.verticalCenter: parent.verticalCenter
-//        text: "Color is unknown."
-//        visible: !page.downloading
-//        anchors.horizontalCenter: parent.horizontalCenter
-//    }
-
-//    ProgressBar {
-//        id: dlprogress
-//        label: "Downloading latest color trends."
-//        anchors.verticalCenter: parent.verticalCenter
-//        width: parent.width
-//        visible: page.downloading
-//    }
-
-//    Button {
-//        text: "Update color"
-//        enabled: !page.downloading
-//        anchors.bottom: parent.bottom
-//        width: parent.width
-//        onClicked: {
-//            python.startDownload();
-//        }
-//    }
-
-//    Python {
-//        id: python
-
-//        Component.onCompleted: {
-//            addImportPath(Qt.resolvedUrl('.'));
-
-//            setHandler('progress', function(ratio) {
-//                dlprogress.value = ratio;
-//            });
-//            setHandler('finished', function(newvalue) {
-//                page.downloading = false;
-//                mainLabel.text = 'Color is ' + newvalue + '.';
-//            });
-
-//            importModule('datadownloader', function () {});
-
-//        }
-
-//        function startDownload() {
-//            page.downloading = true;
-//            dlprogress.value = 0.0;
-//            call('datadownloader.downloader.download', function() {});
-//        }
-
-//        onError: {
-//            // when an exception is raised, this error handler will be called
-//            console.log('python error: ' + traceback);
-//        }
-
-//        onReceived: {
-//            // asychronous messages from Python arrive here
-//            // in Python, this can be accomplished via pyotherside.send()
-//            console.log('got message from python: ' + data);
-//        }
-//    }
 }
 
 
