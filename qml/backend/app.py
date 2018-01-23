@@ -20,6 +20,7 @@ class TaskList:
     def __init__(self):
         self._tasks = []
         self.add_seeds()
+        pyotherside.send('finished')
 
     def get_tasks(self):
         #map(lambda x: .to_dict, self._tasks)]
@@ -42,4 +43,3 @@ class TaskList:
         self.add_task(3, "Blubb3", True, 0, 0)
 
 tasklist = TaskList()
-

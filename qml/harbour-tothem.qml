@@ -35,17 +35,22 @@ import "pages"
 
 ApplicationWindow
 {
-    initialPage: Component { FirstPage { } }
-    cover: Qt.resolvedUrl("cover/CoverPage.qml")
+    property bool pythonReady: false
 
     Python {
         id: python
 
-        Component.onCompleted: {
+        Component.onCompleted:
+        {
             addImportPath(Qt.resolvedUrl('./backend'));
-            importModule('app', function () {} );
+
+            importModule('app', function( s ) {
+                console.log("importModule(app) finished (?)" + s)
+                pythonReady = true;
+            });
         }
     }
+
+    initialPage: Component { FirstPage { } }
+    cover: Qt.resolvedUrl("cover/CoverPage.qml")
 }
-
-

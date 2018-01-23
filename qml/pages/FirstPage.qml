@@ -37,6 +37,7 @@ Page {
 
     id: page
     property bool downloading: false
+    property bool ready: false
 
 
     SilicaListView {
@@ -96,7 +97,12 @@ Page {
         id: taskListModel
     }
 
-    onPageContainerChanged: loadTasks()
+    Component.onCompleted:
+    {
+        python.setHandler('finished', function() {
+            loadTasks();
+        });
+    }
 
     function appendStuff(tasks) {
         console.log("Huhu!! in appendStuff");
@@ -122,6 +128,7 @@ Page {
 
         console.log("Huhu!! in loadTasks");
     }
+
 }
 
 
