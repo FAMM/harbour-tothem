@@ -30,6 +30,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import io.thp.pyotherside 1.5
 import "../components"
 
 Page {
@@ -97,17 +98,29 @@ Page {
 
     onPageContainerChanged: loadTasks()
 
-    function loadTasks() {
-//        var tasks = python.evaluate("tasks")
+    function appendStuff(tasks) {
+        console.log("Huhu!! in appendStuff");
+    }
 
-//        for(var i = 0; i < tasks.length; i++) {
-//            var t = tasks[i]
-//            taskListModel.append({
-//                 id: t.id,
-//                 title: t.description,
-//                 active: t.done
-//             });
-//        };
+    function loadTasks() {
+        var tasks = python.call_sync('app.tasklist.get_tasks');
+
+        console.log(tasks);
+
+        for(var i = 0; i < 1; i++) {
+//            var t = tasks[0];
+            console.log("Huhu!!");
+            console.log(tasks[0]["id"]);
+            console.log(tasks[0]["description"]);
+            //console.log(true); <- heavily forbidden (?)
+            taskListModel.append({
+                 "id": tasks[0]["id"],
+                 "title": tasks[0]["description"],
+                 "active": false
+            });
+        };
+
+        console.log("Huhu!! in loadTasks");
     }
 }
 

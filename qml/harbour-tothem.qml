@@ -43,56 +43,7 @@ ApplicationWindow
 
         Component.onCompleted: {
             addImportPath(Qt.resolvedUrl('./backend'));
-            addImportPath(Qt.resolvedUrl('./backend/tasks'));
-
-//            setHandler('progress', function(ratio) {
-//                dlprogress.value = ratio;
-//            });
-//            setHandler('finished', function(newvalue) {
-//                page.downloading = false;
-//                mainLabel.text = 'Color is ' + newvalue + '.';
-//            });
-
-            importModule('app', function (s) {
-                console.log(s)
-                addItems();
-            });
-
-        }
-//        function startDownload() {
-//            page.downloading = true;
-//            dlprogress.value = 0.0;
-//            call('datadownloader.downloader.download', function() {});
-//        }
-
-//        onError: {
-//            // when an exception is raised, this error handler will be called
-//            console.log('python error: ' + traceback);
-//        }
-
-//        onReceived: {
-//            // asychronous messages from Python arrive here
-//            // in Python, this can be accomplished via pyotherside.send()
-//            console.log('got message from python: ' + data);
-//        }
-
-        function addItems() {
-            var toAdd = [
-                        {id: 0, description: "Foo", done: false},
-                        {id: 1, description: "Foo", done: false},
-                        {id: 2, description: "Foo", done: false},
-                        {id: 3, description: "Foo", done: false},
-                        {id: 4, description: "Foo", done: false},
-                        {id: 5, description: "Foo", done: true},
-                        {id: 6, description: "Foo", done: true},
-                        {id: 7, description: "Foo", done: true},
-                        {id: 8, description: "Foo", done: true}
-                    ];
-
-            for(var i=0; i < toAdd.length; i++) {
-               var task = toAdd[i]
-               python.call("app.add_task",[task["id"], task["description"], task["done"], 0, 0])
-            }
+            importModule('app', function () {} );
         }
     }
 }
