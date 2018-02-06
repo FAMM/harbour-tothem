@@ -67,6 +67,25 @@ Page {
                 pageStack.push(Qt.resolvedUrl("TaskPage.qml"), props)
             }
 
+            PullDownMenu {
+                MenuItem {
+                    text: "About"
+                    onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+                }
+
+                MenuItem {
+                    text: "Settings"
+                    //onClicked: pageStack.push(settingsPage)
+                }
+
+                MenuItem {
+                    text: "Add Task"
+                    onClicked: function() {
+                        var dialog = pageStack.push(Qt.resolvedUrl("TaskEditor.qml"), {})
+                    }
+                }
+            }
+
             TaskListItem {
                 anchors.leftMargin: Theme.paddingSmall
                 anchors.rightMargin: Theme.paddingSmall
