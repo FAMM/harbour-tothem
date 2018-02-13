@@ -60,11 +60,14 @@ Page {
 
             onClicked: {
                 var props = {
-                    label: title,
-                    enabled: active
+                    tid: model.tid,
+                    tuuid: model.tuuid,
+                    description: model.description,
+                    tdone: model.done,
+                    due: model.due
                 }
 
-                pageStack.push(Qt.resolvedUrl("TaskPage.qml"), props)
+                pageStack.push(Qt.resolvedUrl("TaskEditorDialog.qml"), props)
             }
 
             PullDownMenu {
@@ -81,25 +84,27 @@ Page {
                 MenuItem {
                     text: "Add Task"
                     onClicked: function() {
-                        var dialog = pageStack.push(Qt.resolvedUrl("TaskEditor.qml"), {})
+                        pageStack.push(Qt.resolvedUrl("TaskEditorDialog.qml"), {})
                     }
                 }
             }
 
             TaskListItem {
+                id: taskListItem
                 anchors.leftMargin: Theme.paddingSmall
                 anchors.rightMargin: Theme.paddingSmall
-                id: taskListItem
-                enabled: active
-                label: title
+                tid: model.tid
+                tuuid: model.tuuid
+                description: model.description
+                done: model.done
             }
 
             Component {
                 id: taskItemContextMenu
                 ContextMenu {
                     MenuItem {
-                        text: taskListItem.enabled ? "Done" : "Activate"
-                        onClicked: { taskListItem.enabled = !taskListItem.enabled }
+                        text: taskListItem.done ? "Active" : "Done"
+                        onClicked: { taskListItem.done = !taskListItem.done }
                     }
                     MenuItem {
                         text: "Delete"
@@ -107,7 +112,6 @@ Page {
                     }
                 }
             }
-
         }
 
     }
@@ -121,31 +125,26 @@ Page {
         python.setHandler('finished', function() {
             loadTasks();
         });
-    }
 
-    function appendStuff(tasks) {
-        console.log("Huhu!! in appendStuff");
+        python.setHandler('tasks_updated', function(){
+            console.log("tasks_updated!!!");
+            loadTasks();
+        });
     }
 
     function loadTasks() {
         var tasks = python.call_sync('app.tasklist.get_tasks');
+        taskListModel.clear()
 
-        console.log(tasks);
-
-        for(var i = 0; i < 1; i++) {
-//            var t = tasks[0];
-            console.log("Huhu!!");
-            console.log(tasks[0]["id"]);
-            console.log(tasks[0]["description"]);
-            //console.log(true); <- heavily forbidden (?)
+        for(var i = 0; i < tasks.length; i++) {
             taskListModel.append({
-                 "id": tasks[0]["id"],
-                 "title": tasks[0]["description"],
-                 "active": false
+                 "tid": tasks[i]["id"],
+                 "tuuid": tasks[i]["uuid"],
+                 "description": tasks[i]["description"],
+                 "done": tasks[i]["done"],
+                 "due": tasks[i]["due"]
             });
         };
-
-        console.log("Huhu!! in loadTasks");
     }
 
 }

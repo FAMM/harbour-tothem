@@ -2,17 +2,18 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 Dialog {
+    property string tid
+    property string tuuid
     property string description
-    property string id
+    property bool tdone: false
     property date due
 
     Column {
         width: parent.width
 
         DialogHeader {
-            acceptText: id === null ? "Create" : "Save"
+            acceptText: tid ? "Save" : "Create"
         }
-
 
         TextField {
             id: descriptionField
@@ -25,8 +26,6 @@ Dialog {
 
         ValueButton {
             function openDateDialog() {
-                console.log(due.getTime() ? "foo":"bar")
-
                 var dialog = pageStack.push("Sailfish.Silica.DatePickerDialog", {
                     date: due.getTime() ? due : new Date()
                 })
@@ -42,12 +41,28 @@ Dialog {
             width: parent.width
             onClicked: openDateDialog()
         }
+
+        DetailItem{
+            label: "ID"
+            value: tid
+            visible: tid
+        }
+
+        DetailItem {
+            label: "UUID"
+            value: tuuid
+            visible: tuuid
+        }
     }
 
-    onDone: {
+    onDone: function() {
         if (result == DialogResult.Accepted) {
             description = descriptionField.text
-            console.log(description)
+            if (tuuid) {
+                python.call_sync("app.tasklist.update_task", [tuuid, description, tdone, due, ""]);
+            } else {
+                python.call_sync("app.tasklist.add_task", [description, tdone, due, ""]);
+            }
         }
     }
 }

@@ -2,19 +2,31 @@ import pyotherside
 import threading
 import time
 import random
+import uuid
 
 class Task:
-    def __init__(self, id, done, description, due, created_at):
+    global_id = 0
+
+    def create(description, done, due, created_at):
+        Task.global_id = Task.global_id + 1
+        return Task(Task.global_id, str(uuid.uuid1()), description, done, due, created_at)
+
+    def __init__(self, id, uuid, description, done, due, created_at):
         self.id = id
+        self.uuid = uuid
         self.done = done
         self.description = description
         self.due = due
         self.created_at = created_at
 
     def to_dict(self):
-        return {'id': self.id, 'done': self.done, 'description': self.description, 'due': self.due}
-
-
+        return {
+            'id': self.id,
+            'uuid': self.uuid,
+            'done': self.done,
+            'description': self.description,
+            'due': self.due
+            }
 
 class TaskList:
     def __init__(self):
@@ -23,23 +35,28 @@ class TaskList:
         pyotherside.send('finished')
 
     def get_tasks(self):
-        #map(lambda x: .to_dict, self._tasks)]
-        return [ {"id": 0, "description": "Blablub", "done": False} ]
+        return [task.to_dict() for task in self._tasks]
 
-    def add_task(self, id, description, done, due, created_at):
-        task = Task(id, description, done, due, created_at)
+    def add_task(self, description, done, due, created_at):
+        task = Task.create(description, done, due, created_at)
         self._tasks.append(task)
+        pyotherside.send('tasks_updated')
 
-    def get_task_by_id(self, id):
-        for task in self._tasks:
-            if task.id == id:
-                return task
-        return None
+    def update_task(self, uuid, description, done, due, created_at):
+        task = self.get_task_by_uuid(uuid)
+        task.description = description
+        task.done = done
+        task.due = due
+        task.created_at = created_at
+        pyotherside.send('tasks_updated')
+
+    def get_task_by_uuid(self, uuid):
+        return next(task for task in self._tasks if task.uuid == uuid)
 
     def add_seeds(self):
-        self.add_task(0, "Blubb0", False, 0, 0)
-        self.add_task(1, "Blubb1", False, 0, 0)
-        self.add_task(2, "Blubb2", False, 0, 0)
-        self.add_task(3, "Blubb3", True, 0, 0)
+        self._tasks.append(Task.create("Blubb0", False, 0, 0))
+        self._tasks.append(Task.create("Blubb1", False, 0, 0))
+        self._tasks.append(Task.create("Blubb2", False, 0, 0))
+        self._tasks.append(Task.create("Blubb3", True, 0, 0))
 
 tasklist = TaskList()

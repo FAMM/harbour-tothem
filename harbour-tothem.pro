@@ -19,7 +19,6 @@ SOURCES +=
 OTHER_FILES += qml/harbour-tothem.qml \
     qml/cover/CoverPage.qml \
     qml/pages/FirstPage.qml \
-    qml/pages/TaskPage.qml \
     rpm/harbour-tothem.changes.in \
     rpm/harbour-tothem.spec \
     rpm/harbour-tothem.yaml \

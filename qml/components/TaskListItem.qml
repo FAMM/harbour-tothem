@@ -2,21 +2,24 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 Item {
-    id: self
-    property bool enabled
-    property string label
+    id: taskListItem
+    property int tid
+    property string tuuid
+    property string description
+    property bool done
+    property string due
 
     width: parent.width
     anchors.fill: parent
 
     Image {
         id: icon
-        source: parent.enabled ? "image://theme/icon-m-tabs" : 'image://theme/icon-m-certificates'
+        source: done ? 'image://theme/icon-m-certificates' : "image://theme/icon-m-tabs"
     }
 
     Label {
         id: labelElem
-        text: parent.label
+        text: description
         anchors.left: icon.right
         anchors.leftMargin: Theme.paddingMedium
         anchors.verticalCenter: icon.verticalCenter
