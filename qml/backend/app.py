@@ -1,8 +1,12 @@
+import os
+import pickle
 import pyotherside
+import random
 import threading
 import time
-import random
 import uuid
+
+DEFAULT_SAVE_PATH="~/.harbour-tothem.pickle"
 
 class Task:
     global_id = 0
@@ -50,6 +54,10 @@ class TaskList:
         task.created_at = created_at
         pyotherside.send('tasks_updated')
 
+    def remove_task(self, uuid):
+        self._tasks.remove(self.get_task_by_uuid(uuid))
+        pyotherside.send('tasks_updated')
+
     def get_task_by_uuid(self, uuid):
         return next(task for task in self._tasks if task.uuid == uuid)
 
@@ -58,5 +66,16 @@ class TaskList:
         self._tasks.append(Task.create("Blubb1", False, 0, 0))
         self._tasks.append(Task.create("Blubb2", False, 0, 0))
         self._tasks.append(Task.create("Blubb3", True, 0, 0))
+
+    def save_to_file(self):
+        with open(os.path.expanduser(DEFAULT_SAVE_PATH), 'wb') as handle:
+            pyotherside.send('got_write_handle')
+            pickle.dump(self._tasks, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def read_from_file(self):
+        with open(os.path.expanduser(DEFAULT_SAVE_PATH), 'rb') as handle:
+            pyotherside.send('got_read_handle')
+            self._tasks = pickle.load(handle)
+        pyotherside.send('tasks_updated')
 
 tasklist = TaskList()

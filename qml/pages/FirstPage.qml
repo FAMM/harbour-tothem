@@ -87,6 +87,16 @@ Page {
                         pageStack.push(Qt.resolvedUrl("TaskEditorDialog.qml"), {})
                     }
                 }
+
+                MenuItem {
+                    text: "Read from file"
+                    onClicked: readFromFile()
+                }
+
+                MenuItem {
+                    text: "Save to file"
+                    onClicked: saveToFile()
+                }
             }
 
             TaskListItem {
@@ -104,11 +114,14 @@ Page {
                 ContextMenu {
                     MenuItem {
                         text: taskListItem.done ? "Active" : "Done"
-                        onClicked: { taskListItem.done = !taskListItem.done }
+                        onClicked: {
+                            //taskListItem.done = !taskListItem.done
+                           python.call_sync("app.tasklist.update_task", [taskListItem.tuuid, taskListItem.description, !taskListItem.done, taskListItem.due, ""]);
+                        }
                     }
                     MenuItem {
                         text: "Delete"
-                        onClicked: {}
+                        onClicked: { removeTask( taskListItem.tuuid ); }
                     }
                 }
             }
@@ -130,6 +143,14 @@ Page {
             console.log("tasks_updated!!!");
             loadTasks();
         });
+
+        python.setHandler('got_write_handle', function(){
+            console.log("got_write_handle!!!");
+        });
+
+        python.setHandler('got_read_handle', function(){
+            console.log("got_read_handle!!!");
+        });
     }
 
     function loadTasks() {
@@ -145,6 +166,18 @@ Page {
                  "due": tasks[i]["due"]
             });
         };
+    }
+
+    function removeTask( uuid ) {
+        python.call_sync('app.tasklist.remove_task', [uuid]);
+    }
+
+    function readFromFile() {
+        python.call_sync('app.tasklist.read_from_file');
+    }
+
+    function saveToFile() {
+        python.call_sync('app.tasklist.save_to_file');
     }
 
 }
