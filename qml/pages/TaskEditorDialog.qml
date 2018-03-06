@@ -1,18 +1,15 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
 
 Dialog {
-    property string tid
-    property string tuuid
-    property string description
-    property bool tdone: false
-    property date due
+    property TaskListItem task: TaskListItem{ }
 
     Column {
         width: parent.width
 
         DialogHeader {
-            acceptText: tid ? "Save" : "Create"
+            acceptText: task.tid ? "Save" : "Create"
         }
 
         TextField {
@@ -21,47 +18,53 @@ Dialog {
             labelVisible: true
             placeholderText: "What do you want to do?"
             label: "Description"
-            text: description
+            text: task.description
         }
 
         ValueButton {
             function openDateDialog() {
                 var dialog = pageStack.push("Sailfish.Silica.DatePickerDialog", {
-                    date: due.getTime() ? due : new Date()
+                    date: task.due.getTime() ? task.due : new Date()
                 })
 
                 dialog.accepted.connect(function() {
                     value= dialog.dateText
-                    due = dialog.date
+                    task.due = dialog.date
                 })
             }
 
             label: "Due"
-            value: due.getTime() ? due.toDateString() : "Select"
+            value: task.due.getTime() ? task.due.toDateString() : "Select"
             width: parent.width
             onClicked: openDateDialog()
         }
 
         DetailItem{
             label: "ID"
-            value: tid
-            visible: tid
+            value: task.tid
+            visible: task.tid
         }
 
         DetailItem {
             label: "UUID"
-            value: tuuid
-            visible: tuuid
+            value: task.tuuid
+            visible: task.tuuid
+        }
+
+        DetailItem {
+            label: "Created At"
+            value: task.created_at.toLocaleString()
+            visible: task.created_at.getTime()
         }
     }
 
     onDone: function() {
         if (result == DialogResult.Accepted) {
-            description = descriptionField.text
-            if (tuuid) {
-                python.call_sync("app.tasklist.update_task", [tuuid, description, tdone, due, ""]);
+            task.description = descriptionField.text
+            if (task.tuuid) {
+                updateTask( task );
             } else {
-                python.call_sync("app.tasklist.add_task", [description, tdone, due, ""]);
+                addTask( task )
             }
         }
     }

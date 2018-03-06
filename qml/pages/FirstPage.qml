@@ -29,104 +29,106 @@
 */
 
 import QtQuick 2.0
+import QtQml 2.0
 import Sailfish.Silica 1.0
 import io.thp.pyotherside 1.5
 import "../components"
 
 Page {
-
     id: page
     property bool downloading: false
     property bool ready: false
 
-
-    SilicaListView {
-        id: listView
-
+    SilicaFlickable {
         anchors.fill: parent
+        contentHeight: page.height
 
-        model: taskListModel
+        PullDownMenu {
+            MenuItem {
+                text: "About"
+                onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+            }
 
-        header: PageHeader {
-            id: header
-            width: parent.width
-            title: "ToThem"
+            MenuItem {
+                text: "Settings"
+                //onClicked: pageStack.push(settingsPage)
+            }
+
+            MenuItem {
+                text: "Add Task"
+                onClicked: function() {
+                    pageStack.push(Qt.resolvedUrl("TaskEditorDialog.qml"), {})
+                }
+            }
+
+            MenuItem {
+                text: "Read from file"
+                onClicked: readFromFile()
+            }
+
+            MenuItem {
+                text: "Save to file"
+                onClicked: saveToFile()
+            }
         }
 
-        delegate: ListItem {
-            id: listItem
+        SilicaListView {
+            id: listView
 
-            menu: taskItemContextMenu
+            anchors.fill: parent
 
-            onClicked: {
-                var props = {
-                    tid: model.tid,
-                    tuuid: model.tuuid,
-                    description: model.description,
-                    tdone: model.done,
+            model: taskListModel
+
+            header: PageHeader {
+                id: header
+                width: parent.width
+                title: "ToThem"
+            }
+
+            delegate: ListItem {
+                id: listItem
+
+                menu: taskItemContextMenu
+
+                TaskListItem {
+                    id: taskListItem
+                    anchors.leftMargin: Theme.paddingSmall
+                    anchors.rightMargin: Theme.paddingSmall
+
+                    tid: model.tid
+                    tuuid: model.tuuid
+                    description: model.description
+                    done: model.done
                     due: model.due
+                    created_at: model.created_at
                 }
 
-                pageStack.push(Qt.resolvedUrl("TaskEditorDialog.qml"), props)
-            }
-
-            PullDownMenu {
-                MenuItem {
-                    text: "About"
-                    onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
-                }
-
-                MenuItem {
-                    text: "Settings"
-                    //onClicked: pageStack.push(settingsPage)
-                }
-
-                MenuItem {
-                    text: "Add Task"
-                    onClicked: function() {
-                        pageStack.push(Qt.resolvedUrl("TaskEditorDialog.qml"), {})
+                onClicked: {
+                    var props = {
+                        task: taskListItem
                     }
+                    pageStack.push(Qt.resolvedUrl("TaskEditorDialog.qml"), props)
                 }
 
-                MenuItem {
-                    text: "Read from file"
-                    onClicked: readFromFile()
-                }
-
-                MenuItem {
-                    text: "Save to file"
-                    onClicked: saveToFile()
-                }
-            }
-
-            TaskListItem {
-                id: taskListItem
-                anchors.leftMargin: Theme.paddingSmall
-                anchors.rightMargin: Theme.paddingSmall
-                tid: model.tid
-                tuuid: model.tuuid
-                description: model.description
-                done: model.done
-            }
-
-            Component {
-                id: taskItemContextMenu
-                ContextMenu {
-                    MenuItem {
-                        text: taskListItem.done ? "Active" : "Done"
-                        onClicked: {
-                            //taskListItem.done = !taskListItem.done
-                           python.call_sync("app.tasklist.update_task", [taskListItem.tuuid, taskListItem.description, !taskListItem.done, taskListItem.due, ""]);
+                Component {
+                    id: taskItemContextMenu
+                    ContextMenu {
+                        MenuItem {
+                            text: taskListItem.done ? "Active" : "Done"
+                            onClicked: {
+                               taskListItem.done = !taskListItem.done
+                               updateTask(taskListItem)
+                            }
+                        }
+                        MenuItem {
+                            text: "Delete"
+                            onClicked: { removeTask( taskListItem.tuuid ); }
                         }
                     }
-                    MenuItem {
-                        text: "Delete"
-                        onClicked: { removeTask( taskListItem.tuuid ); }
-                    }
                 }
             }
-        }
 
+        }
     }
 
     ListModel {
@@ -136,7 +138,7 @@ Page {
     Component.onCompleted:
     {
         python.setHandler('finished', function() {
-            loadTasks();
+            readFromFile();
         });
 
         python.setHandler('tasks_updated', function(){
@@ -163,23 +165,9 @@ Page {
                  "tuuid": tasks[i]["uuid"],
                  "description": tasks[i]["description"],
                  "done": tasks[i]["done"],
-                 "due": tasks[i]["due"]
+                 "due": tasks[i]["due"],
+                 "created_at": tasks[i]["created_at"]
             });
         };
     }
-
-    function removeTask( uuid ) {
-        python.call_sync('app.tasklist.remove_task', [uuid]);
-    }
-
-    function readFromFile() {
-        python.call_sync('app.tasklist.read_from_file');
-    }
-
-    function saveToFile() {
-        python.call_sync('app.tasklist.save_to_file');
-    }
-
 }
-
-

@@ -53,4 +53,27 @@ ApplicationWindow
 
     initialPage: Component { FirstPage { } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
+
+    function addTask( task ) {
+        python.call_sync("app.tasklist.add_task", [task.description, task.tdone, task.due]);
+        saveToFile()
+    }
+
+    function updateTask( task ) {
+        python.call_sync("app.tasklist.update_task", [task.tuuid, task.description, task.done, task.due]);
+        saveToFile()
+    }
+
+    function removeTask( uuid ) {
+        python.call_sync('app.tasklist.remove_task', [uuid]);
+        saveToFile()
+    }
+
+    function readFromFile() {
+        python.call_sync('app.tasklist.read_from_file');
+    }
+
+    function saveToFile() {
+        python.call_sync('app.tasklist.save_to_file');
+    }
 }

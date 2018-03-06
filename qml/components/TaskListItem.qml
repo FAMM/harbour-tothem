@@ -7,7 +7,8 @@ Item {
     property string tuuid
     property string description
     property bool done
-    property string due
+    property date due
+    property date created_at
 
     width: parent.width
     anchors.fill: parent
