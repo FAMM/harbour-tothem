@@ -6,7 +6,7 @@ Item {
     property int tid
     property string tuuid
     property string description
-    property bool done
+    property bool done : false
     property date due
     property date created_at
 

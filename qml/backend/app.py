@@ -37,7 +37,6 @@ class Task:
 class TaskList:
     def __init__(self):
         self._tasks = []
-        self.add_seeds()
         pyotherside.send('finished')
 
     def get_tasks(self):
@@ -62,13 +61,6 @@ class TaskList:
 
     def get_task_by_uuid(self, uuid):
         return next(task for task in self._tasks if task.uuid == uuid)
-
-    def add_seeds(self):
-        1+1
-        self._tasks.append(Task.create("Blubb0", False, datetime.date.today()))
-        self._tasks.append(Task.create("Blubb1", False, datetime.date.today()))
-        self._tasks.append(Task.create("Blubb2", False, datetime.date.today()))
-        self._tasks.append(Task.create("Blubb3", True, datetime.date.today()))
 
     def save_to_file(self):
         with open(os.path.expanduser(DEFAULT_SAVE_PATH), 'wb') as handle:

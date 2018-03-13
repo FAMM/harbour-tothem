@@ -60,16 +60,6 @@ Page {
                     pageStack.push(Qt.resolvedUrl("TaskEditorDialog.qml"), {})
                 }
             }
-
-            MenuItem {
-                text: "Read from file"
-                onClicked: readFromFile()
-            }
-
-            MenuItem {
-                text: "Save to file"
-                onClicked: saveToFile()
-            }
         }
 
         SilicaListView {
