@@ -60,7 +60,36 @@ class TaskList:
         pyotherside.send('tasks_updated')
 
     def get_task_by_uuid(self, uuid):
-        return next(task for task in self._tasks if task.uuid == uuid)
+        try:
+            return next(task for task in self._tasks if task.uuid == uuid)
+        except StopIteration:
+            return None
+
+    # TODO! How to handle mix of .to_dict() and python-object returns?
+    def get_next_open_task(self, uuid):
+        if len(self._tasks) == 0:
+            return None
+
+        if len(self._tasks) == 1:
+            current_task = self._tasks[0]
+            if not current_task.done:
+                return current_task.to_dict()
+
+            return None
+
+        index = 0
+        open_tasks = [task for task in self._tasks if not task.done]
+        if not open_tasks:
+            return None
+        if uuid:
+            current_task = self.get_task_by_uuid(uuid)
+            try:
+                index = open_tasks.index(current_task) + 1
+            except ValueError:
+                pass
+            if index >= len(open_tasks):
+                index = 0
+        return open_tasks[index].to_dict()
 
     def save_to_file(self):
         with open(os.path.expanduser(DEFAULT_SAVE_PATH), 'wb') as handle:

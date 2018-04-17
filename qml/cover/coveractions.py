@@ -31,6 +31,7 @@
 
 
 def action_next():
+    all_tasks = app.tasklist.get_tasks
     return "Action\nnext\ntriggered."
 
 def action_pause():

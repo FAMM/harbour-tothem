@@ -1,7 +1,6 @@
 [Desktop Entry]
 Type=Application
 X-Nemo-Application-Type=silica-qt5
-Icon=pythonsample
+Icon=harbour-tothem
 Exec=sailfish-qml harbour-tothem
 Name=Tothem
-

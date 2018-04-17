@@ -32,28 +32,56 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import io.thp.pyotherside 1.5
 
+
+
 CoverBackground {
+    property string currentTaskUUID;
+
+    function getNextUndoneTask() {
+        var currentTask = python.call_sync('app.tasklist.get_next_open_task', [currentTaskUUID]);
+        if (currentTask) {
+            currentTaskUUID = currentTask["uuid"];
+        }
+        return currentTask;
+    }
+
+    function doneCurrentTask() {
+        // Maybe there were some changes meanwhile ... (e.g. due date has changed)
+        var task = python.call_sync("app.tasklist.get_task_by_uuid", [currentTaskUUID]);
+        task.done = true;
+        python.call_sync("app.tasklist.update_task", [task.tuuid, task.description, task.done, task.due]);
+    }
+
     Label {
         id: label
         anchors.centerIn: parent
-        text: ("Plain Cover")
+        text: ("No tasks")
     }
 
     CoverActionList {
         id: coverAction
 
         CoverAction {
-            iconSource: "image://theme/icon-cover-next"
-            onTriggered: python.call('coveractions.action_next', [], function(newstring) {
+            iconSource: "image://theme/icon-cover-pause"
+            onTriggered: python.call('coveractions.action_pause', [], function(newstring) {
                 label.text = newstring;
             });
         }
 
         CoverAction {
-            iconSource: "image://theme/icon-cover-pause"
-            onTriggered: python.call('coveractions.action_pause', [], function(newstring) {
-                label.text = newstring;
-            });
+            iconSource: "image://theme/icon-cover-next"
+            onTriggered:
+            {
+                var task = getNextUndoneTask();
+                console.log(task);
+                if (task) {
+                  console.log(task["description"]);
+                  label.text = task["description"];
+                }
+                else {
+                  label.text = "No undone tasks!"
+                }
+            }
         }
     }
 
