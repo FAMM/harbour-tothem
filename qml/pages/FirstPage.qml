@@ -100,6 +100,10 @@ Page {
                     pageStack.push(Qt.resolvedUrl("TaskEditorDialog.qml"), props)
                 }
 
+                function remove() {
+                    remorseAction("Deleting", function() { removeTask( taskListItem.tuuid ) })
+                }
+
                 Component {
                     id: taskItemContextMenu
                     ContextMenu {
@@ -112,7 +116,7 @@ Page {
                         }
                         MenuItem {
                             text: "Delete"
-                            onClicked: { removeTask( taskListItem.tuuid ); }
+                            onClicked: remove()
                         }
                     }
                 }
