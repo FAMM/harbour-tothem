@@ -55,7 +55,7 @@ ApplicationWindow
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
 
     function addTask( task ) {
-        python.call_sync("app.tasklist.add_task", [task.description, task.tdone, task.due]);
+        python.call_sync("app.tasklist.add_task", [task.description, task.done, task.due]);
         saveToFile()
     }
 

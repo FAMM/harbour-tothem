@@ -12,9 +12,6 @@ Item {
     property date due
     property date created_at
 
-    width: parent.width
-    anchors.fill: parent
-
     Image {
         id: icon
         source: done ? 'image://theme/icon-m-certificates' : "image://theme/icon-m-tabs"
