@@ -9,6 +9,8 @@ Dialog {
         width: parent.width
 
         DialogHeader {
+            id: taskEditorHeader
+            title: task.tid ? "Edit task" : "Create task"
             acceptText: task.tid ? "Save" : "Create"
         }
 
