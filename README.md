@@ -57,3 +57,19 @@ To the left of the screen is the originating screen, either the [Main screen](#m
 This screen allows the user to create a new task.
 
 To the left of the screen is the originating screen, either the [Main screen](#main_screen) or the [Filter view](#filter_view).
+
+
+## TODO
+
+[ ] integration with taskwarrior
+  [x] taskwarrior python bindings?
+    [x] dependencies (all for python3): 
+       [x] python3-six
+       [x] python-tasklib
+       [x] python-pytz
+       [x] python-tzlocal
+  [ ] package everything for easy shipping to customers
+  [ ] usage of taskwarrior bindings for managing tasks
+
+[ ] filter views
+[ ] release party
